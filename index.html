@@ -35,20 +35,24 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🔥 GENERATE LEADS (TEMP FAKE DATA FIRST)
+// 🔥 GENERATE LEADS 
 window.generateLeads = async () => {
 
-  const location = document.getElementById("location").value;
-  const budget = document.getElementById("budget").value;
+  const res = await fetch("YOUR_APIFY_API_URL");
 
-  await addDoc(collection(db, "leads"), {
-    name: "Owner " + location,
-    phone: "60111111111",
-    location,
-    budget
-  });
+  const data = await res.json();
 
-};
+  for (let item of data) {
+
+    await addDoc(collection(db, "leads"), {
+      name: "FB Buyer",
+      phone: item.phone,
+      whatsapp: item.whatsapp,
+      email: item.email,
+      source: item.source
+    });
+  }
+};  
 
 // LIVE UPDATE
 onSnapshot(collection(db, "leads"), (snap) => {
